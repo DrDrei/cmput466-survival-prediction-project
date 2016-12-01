@@ -4,6 +4,12 @@
 # -t: slits the data as per _PERCENT_SPLIT ratio into test/train files.
 # -a: formats the entire data set into pssp format
 
+# USERFUL TERMINAL FUNCTIONS
+# trains the data
+# ./mtlr_train -c 10 -d 1 -m 60 -i trainWrapperData.csv -o example.model
+# tests the data with L1 loss
+# ./mtlr_test -l l1 -m 468 -q testWrapperData.csv -i example.test -o example.model
+
 import csv
 import io
 import sys, getopt
@@ -46,7 +52,7 @@ def main(argv):
 			outputTest.close()
 			outputTrain.close()
 
-		elif (option == '-a':
+		elif (option == '-a'):
 			file_out = "allWrapperData.csv"
 
 			outputFile = open(file_out, 'w+')
