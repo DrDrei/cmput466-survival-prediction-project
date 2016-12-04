@@ -18,7 +18,7 @@ import sys, getopt
 import numpy as np
 import os, shutil
 
-_PERCENT_SPLIT = 0.2
+PERCENT_SPLIT = 0.2
 
 def writeToFile(file, line):
 	array = line.split(",")
@@ -48,7 +48,7 @@ def main(argv):
 				data = inputFile.read().splitlines(1)
 				data.pop(0)
 				for line in data:
-					if (np.random.random_sample() > _PERCENT_SPLIT):
+					if (np.random.random_sample() > PERCENT_SPLIT):
 						writeToFile(outputTest, line)
 					else:
 						writeToFile(outputTrain, line)

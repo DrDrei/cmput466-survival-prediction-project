@@ -3,12 +3,13 @@ CFLAGS=-O3
 #CFLAGS=-g -Wall
 LD=g++
 LDFLAGS=-O3
+PY=python
 #LDFLAGS=-g
 
 all: mtlr_train mtlr_test
 
 clean:
-	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt
+	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt example.model
 
 mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o 
 	$(LD) $(LDFLAGS) Sparm.o DenseVector.o SparseVector.o common.o Main.o  -o mtlr_train
@@ -16,6 +17,14 @@ mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o
 mtlr_test: Test.o Sparm.o DenseVector.o SparseVector.o common.o 
 	$(LD) $(LDFLAGS) Test.o Sparm.o DenseVector.o SparseVector.o common.o  -o mtlr_test
 
+
+wrappera: 
+	$(PY) wrapper.py -a
+wrappert: 
+	$(PY) wrapper.py -t
+testNtrain:
+	./mtlr_train -c 10 -d 1 -m 60 -i trainWrapperData.csv -o example.model
+	./mtlr_test -p -m 60 -i testWrapperData.csv -o example.model
 Test.o:
 	$(CC) -c $(CFLAGS) Test.cpp -o Test.o
 Sparm.o:
