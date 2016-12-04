@@ -5,10 +5,12 @@
 # -a: formats the entire data set into pssp format
 
 # USERFUL TERMINAL FUNCTIONS
+# Compiles test/train data from CANCERDATA.csv
+# 	python wrapper.py -t
 # trains the data
-# ./mtlr_train -c 10 -d 1 -m 60 -i trainWrapperData.csv -o example.model
+# 	./mtlr_train -c 10 -d 1 -m 60 -i trainWrapperData.csv -o example.model
 # tests the data with L1 loss
-# ./mtlr_test -l l1 -m 468 -q testWrapperData.csv -i example.test -o example.model
+# 	./mtlr_test -p -m 60 -i testWrapperData.csv -o example.model
 
 import csv
 import io
@@ -42,6 +44,7 @@ def main(argv):
 			outputTest = open(file_test, "w+")
 
 			with open(file_in) as inputFile:
+				print("Compiling train/test data.")
 				data = inputFile.read().splitlines(1)
 				data.pop(0)
 				for line in data:
@@ -58,7 +61,7 @@ def main(argv):
 			outputFile = open(file_out, 'w+')
 
 			with open(file_in) as inputFile:
-				print("test")
+				print("Compiling all data.")
 				data = inputFile.read().splitlines(1)
 				data.pop(0)
 				for line in data:

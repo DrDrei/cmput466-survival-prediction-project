@@ -314,6 +314,8 @@ int main(int argc, char* argv[])
 	double mse=0; 
 	long effective_sample_size=0; 
 
+	FILE *fp;
+	fp = fopen("Output.txt", "w");// "w" means that we are going to write on this file
 	// now classify the instances
 	// first compute the probability
 	for (size_t i=0; i<test_sample.size(); i++)
@@ -382,19 +384,20 @@ int main(int argc, char* argv[])
 		if (sparm.GetLossType()!="class")
 		{
 			//cout << qt_time[best_prediction-1]; 
-			cout << a;
+			cout << a;  
+			fprintf(fp, "%f", a);
 		} else { // classification
 			int k=1; 
 			double p = survival_pdf[0]; 
-			while ((k<sparm.GetMaxMonth()+1)&&(qt_time[k-1]<sparm.GetThreshold()))
-			{
+			while ((k<sparm.GetMaxMonth()+1)&&(qt_time[k-1]<sparm.GetThreshold())){
 				p += survival_pdf[k]; 
 				k++; 
 			}
-			if (p>0.5)
-			{
+			if (p>0.5){
+				fprintf(fp, "%f:", p);
 				cout << 1 << ":" << p; // event (death) has occurred
 			} else {
+				fprintf(fp, "%f:", p);
 				cout << 0 << ":" << p; // event has not yet occurred
 			}
 			/*
@@ -410,10 +413,12 @@ int main(int argc, char* argv[])
 		// print probabilities for plotting survival cdf
 		if (sparm.GetPrintProb()) 
 		{
+
 			double surv_prob = 1; 
 			for (int j=0; j<maxMonth+1; j++) 
 			{
 				surv_prob -= survival_pdf[j];
+				fprintf(fp, "%f, ", surv_prob);
 				cout << ", " << surv_prob;
 			}
 		}
@@ -439,19 +444,22 @@ int main(int argc, char* argv[])
 			double y = answer_x_query(x_points, y_points, x_queries[j]); 
 			if (y>=0)
 			{
-				cout << ", x:" << x_queries[j] << ":" << y; 
+				cout << ", x:" << x_queries[j] << ":" << y;   
+				fprintf(fp, ", y:%f:%f", x_queries[j], y);
 			} else {
-				cout << ", x:" << x_queries[j] << ":OUT_OF_RANGE"; 
+				cout << ", x:" << x_queries[j] << ":OUT_OF_RANGE";  
+				fprintf(fp, ", y:%f:OUT_OF_RANGE", x_queries[j]);
 			}
 		}
 		for (size_t j=0; j<y_queries.size(); j++)
 		{
 			double x = answer_y_query(x_points, y_points, y_queries[j]); 
-			if (x>=0)
-			{
-				cout << ", y:" << y_queries[j] << ":" << x; 
+			if (x>=0){
+				cout << ", y:" << y_queries[j] << ":" << x;  
+				fprintf(fp, ", y:%f:%f", y_queries[j], x);
 			} else {
-				cout << ", y:" << y_queries[j] << ":OUT_OF_RANGE";
+				cout << ", y:" << y_queries[j] << ":OUT_OF_RANGE"; 
+				fprintf(fp, ", y:%f:OUT_OF_RANGE", y_queries[j]);
 			}
 		}
 		// print probability at event time, if '-p' option is specified
@@ -462,12 +470,16 @@ int main(int argc, char* argv[])
 			if (y>=0)
 			{
 				cout << ", t:" << t << ":" << y; 
+				fprintf(fp, ", t:%f:%f", t, y);
 			} else {
 				cout << ", t:" << t << ":OUT_OF_RANGE"; 
+				fprintf(fp, ", t:%f:OUT_OF_RANGE",t);
 			}
 
 		}
 		cout << endl; 
+		fprintf(fp, "\n");
+
 
 
 		// accuracy and calibration

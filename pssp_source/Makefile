@@ -8,7 +8,7 @@ LDFLAGS=-O3
 all: mtlr_train mtlr_test
 
 clean:
-	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv
+	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt
 
 mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o 
 	$(LD) $(LDFLAGS) Sparm.o DenseVector.o SparseVector.o common.o Main.o  -o mtlr_train
