@@ -1,0 +1,6 @@
+#install.packages("randomForestSRC", repos = "http://cran.us.r-project.org")
+data1 = read.csv("All_Data_updated_may2011_CLEANED.csv")
+options(rf.cores=detectCores(), mc.cores=detectCores())
+v.obj <- rfsrc(Surv(SURVIVAL, CENSORED) ~ ., data = data1, splitrule = "logrank", ntree = 1000, tree.err=TRUE)
+print(v.obj)
+plot(v.obj)
