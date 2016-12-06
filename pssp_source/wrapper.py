@@ -18,7 +18,7 @@ import sys, getopt
 import numpy as np
 import os, shutil
 
-PERCENT_SPLIT = 0.2
+PERCENT_SPLIT = 0.8
 
 def writeToFile(file, line):
 	array = line.split(",")

@@ -385,7 +385,7 @@ int main(int argc, char* argv[])
 		{
 			//cout << qt_time[best_prediction-1]; 
 			cout << a;  
-			fprintf(fp, "%f", a);
+			fprintf(fp, "%f ", a);
 		} else { // classification
 			int k=1; 
 			double p = survival_pdf[0]; 
