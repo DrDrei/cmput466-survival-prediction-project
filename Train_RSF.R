@@ -7,7 +7,7 @@ library("parallel")
 library("randomForestSRC")
 library("doParallel")
 
-#Read in the data
+#Read in the data for training tree models 75% of 80%
 data1 = read.csv("ALL_DATA1.csv")
 data2 = read.csv("STAGES_121.csv")
 data3 = read.csv("STAGES_31.csv")
@@ -18,6 +18,8 @@ data7 = read.csv("STAGES_3_TYPE_EBHM1.csv")
 data8 = read.csv("STAGES_3_TYPE_OCSP1.csv")
 data9 = read.csv("STAGES_4_TYPE_EBHM1.csv")
 data10 = read.csv("STAGES_4_TYPE_OCSP1.csv")
+
+#Read in the data for training the stacking models from the tree models 25% of 80%
 data11 = read.csv("ALL_DATA2.csv")
 data12 = read.csv("STAGES_122.csv")
 data13 = read.csv("STAGES_32.csv")
@@ -29,6 +31,7 @@ data18 = read.csv("STAGES_3_TYPE_OCSP2.csv")
 data19 = read.csv("STAGES_4_TYPE_EBHM2.csv")
 data20 = read.csv("STAGES_4_TYPE_OCSP2.csv")
 
+#Read in the data for training the stacking models from the MTLR models 25% of 80%
 # MTLR (PSSP) Output for Training Linear Reg. Model
 indata1 = read.table("ALL_DATA.txt")
 indata2 = read.table("STAGES_12.txt")
@@ -41,7 +44,20 @@ indata8 = read.table("STAGES_3_TYPE_OCSP.txt")
 indata9 = read.table("STAGES_4_TYPE_EBHM.txt")
 indata10 = read.table("STAGES_4_TYPE_OCSP.txt")
 
-# Input for Stacking and Backoff Model Testing
+#Read in the true survival times for training the stacking models using linear regression
+indata11 = read.table("fe_all2")
+indata12 = read.table("fe_st122")
+indata13 = read.table("fe_st32")
+indata14 = read.table("fe_st42")
+indata15 = read.table("fe_st12te")
+indata16 = read.table("fe_st12to")
+indata17 = read.table("fe_st3te")
+indata18 = read.table("fe_st3to")
+indata19 = read.table("fe_st4te")
+indata20 = read.table("fe_st4to")
+
+#Read in the data for testing the stacking models from the tree models 20% of the data
+# Input for Stacking and Backoff Model Testing (Input to trees and MTLR)
 data21 = read.csv("ALL_DATA_Test.csv")
 data22 = read.csv("STAGES_12_Test.csv")
 data23 = read.csv("STAGES_3_Test.csv")
@@ -85,9 +101,11 @@ p10.obj <- predict.rfsrc(m10.obj, data20)
 
 # Linear Regression Model, - Stacking Layer - Train using 25% of 80% of data
 # Model - s12_OCSP
+# Training data here must be from s12_OCSP run through the s12_OCSP model, the s12 model and the all data model
 s12_OCSP_data = cbind(indata1,indata2,indata6)
 s12_OCSP=lm(SURVIVAL~indata1+indata2+indata6,data=s12_OCSP_data)
 # Model - s12_EBHM
+# Training data here must be from s12_EBHM run through the s12_EBHM model, the s12 model, and he all data model
 s12_EBHM_data = cbind(indata1,indata2,indata5)
 s12_EBHM=lm(SURVIVAL~indata1+indata2+indata5,data=s12_EBHM_data)
 # Model - s3_OCSP
