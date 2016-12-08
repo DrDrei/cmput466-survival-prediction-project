@@ -5,6 +5,14 @@ LD=g++
 LDFLAGS=-O3
 PY=python
 #LDFLAGS=-g
+DIR1=/cancerTypes/split1/
+DIR2=/cancerTypes/split2/
+DIR3=/cancerTypes/split3/
+IN_FILES := $(wildcard cancerTypes/split2/*.txt)
+OUT_TEST := $(wildcard cancerTypes/split1/*.model)
+OUT_FILES := $(patsubst cancerTypes/split1/%.txt, cancerTypes/split1/%.model, $(wildcard cancerTypes/split1/*.txt))
+
+.PHONY: train
 
 all: mtlr_train mtlr_test
 
@@ -23,8 +31,11 @@ wrappera:
 wrappert: 
 	$(PY) wrapper.py -t
 testNtrain:
-	./mtlr_train -c 10 -d 1 -m 60 -i trainWrapperData.csv -o example.model
+	./mtlr_train -m 60 -i trainWrapperData.csv -o example.model
 	./mtlr_test -p -m 60 -i testWrapperData.csv -o example.model
+	# ./mtlr_test -p -m 60 -i patientZero.csv -o example.model
+train: $(IN_FILES)
+	./mtlr_train -m 60 -i $(IN_FILES) -o $(basename $(IN_FILES)).model
 Test.o:
 	$(CC) -c $(CFLAGS) Test.cpp -o Test.o
 Sparm.o:
