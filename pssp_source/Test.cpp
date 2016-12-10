@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
-
+#include <string>
 #include "common.h"
 
 
@@ -544,15 +544,30 @@ int main(int argc, char* argv[])
 	// ci
 	double ci = concordanceIndex(z); 
 
+	FILE *statsFile;
+	std::string temp = sparm.GetOutputFile();
+	unsigned tempSize = temp.size();
+	temp.resize(tempSize-4);
+	temp.append("_stats.txt");
+	const char * outputFileStats = temp.c_str();
+	statsFile = fopen(outputFileStats, "w");// "w" means that we are going to write on this file
+
 	// output summary 
-	cout << "#concordance index: " << ci << endl; 
-	cout << "#avg l1-loss: " << avg_l1_loss/test_sample.size() << endl; 
+	cout << "#Concordance index: " << ci << endl; 
+	fprintf(statsFile, "Concordance index: %f \n", ci);
+	cout << "#Avg l1-loss: " << avg_l1_loss/test_sample.size() << endl; 
+	fprintf(statsFile, "Avg l1-loss: %f \n", avg_l1_loss/test_sample.size());
 	//cout << "#avg l2-loss: " << avg_l2_loss/test_sample.size() << endl; 
-	cout << "#avg l2-loss: " << sqrt(avg_l2_loss/test_sample.size()) << endl; 
-	cout << "#avg rae-loss: " << avg_rae_loss/test_sample.size() << endl; 
-	cout << "#avg l1-log-loss: " << avg_l1_log_loss/test_sample.size() << endl; 
-	cout << "#avg l2-log-loss: " << avg_l2_log_loss/test_sample.size() << endl; 
-	cout << "#avg log-likelihood loss: " << avg_log_loss/test_sample.size() << endl; 
+	cout << "#Avg l2-loss: " << sqrt(avg_l2_loss/test_sample.size()) << endl; 
+	fprintf(statsFile, "Avg l2-loss: %f \n", sqrt(avg_l2_loss/test_sample.size()));
+	cout << "#Avg rae-loss: " << avg_rae_loss/test_sample.size() << endl; 
+	fprintf(statsFile, "Avg rae-loss: %f \n", avg_rae_loss/test_sample.size());
+	cout << "#Avg l1-log-loss: " << avg_l1_log_loss/test_sample.size() << endl; 
+	fprintf(statsFile, "Avg l1-log-loss: %f \n", avg_l1_log_loss/test_sample.size());
+	cout << "#Avg l2-log-loss: " << avg_l2_log_loss/test_sample.size() << endl; 
+	fprintf(statsFile, "Avg l2-log-loss: %f \n", avg_l2_log_loss/test_sample.size());
+	cout << "#Avg log-likelihood loss: " << avg_log_loss/test_sample.size() << endl; 
+	fprintf(statsFile, "Avg log-likelihood loss: %f \n", avg_log_loss/test_sample.size());
 
 	delete w;
 
