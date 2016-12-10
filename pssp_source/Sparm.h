@@ -8,6 +8,7 @@ class Sparm
 private:
 	std::string m_inputFilename; 
 	std::string m_modelFilename; 
+	std::string m_outputFilename;
 	int m_maxMonth;
 	size_t m_sizePsi;          // feature dimension [by stacking different weight vectors for each month]
 	size_t m_original_sizePsi; // original feature dimension
@@ -36,6 +37,10 @@ public:
 	std::string GetModelFile() const
 	{
 		return m_modelFilename; 
+	}
+	std::string GetOutputFile() const
+	{
+		return m_outputFilename; 
 	}
 	int GetMaxMonth() const
 	{

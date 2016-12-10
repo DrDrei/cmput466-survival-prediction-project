@@ -5,16 +5,20 @@ LD=g++
 LDFLAGS=-O3
 PY=python
 #LDFLAGS=-g
-IN_FILES := $(wildcard cancerTypes/split1/*.txt)
-IN_TEST := $(wildcard cancerTypes/split2/*.txt)
+TRAIN_FILES := $(wildcard cancerTypes/train/*.txt)
+MODEL_FILES := $(wildcard cancerTypes/train/*.model)
+TEST_FILES  := $(wildcard cancerTypes/test/*.txt)
 
-.PHONY: train
+TEST_NAMES			:= $(basename $(notdir $(TEST_FILES)))
+MODELNAMES 			:= $(basename $(notdir $(MODEL_FILES)))
+
+
 .PHONY: test
 	
 all: mtlr_train mtlr_test
 
 clean:
-	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt example.model
+	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt *.model *.test *.train *.interval
 
 mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o 
 	$(LD) $(LDFLAGS) Sparm.o DenseVector.o SparseVector.o common.o Main.o  -o mtlr_train
@@ -31,11 +35,19 @@ testNtrain:
 	./mtlr_train -m 60 -i trainWrapperData.csv -o example.model
 	./mtlr_test -p -m 60 -i testWrapperData.csv -o example.model
 	
-train: $(IN_FILES)
-	./mtlr_train -i $(IN_FILES) -o $(basename $(IN_FILES)).model
+data:
+	$(PY) splitData.py
 
-test: $(IN_TEST)
-	./mtlr_test -i $(IN_TEST) -o $(basename $(IN_TEST)).model	
+train:
+	$(foreach var, $(TRAIN_FILES), ./mtlr_train -i $(var) -o $(basename $(var)).model;)
+	
+test:
+	@for testname in $(TEST_NAMES); do \
+		for model in $(MODELNAMES); do \
+			./mtlr_test -i cancerTypes/test/$${testname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/finalData/$${testname}_$${model}.txt; \
+		done; \
+	done
+
 Test.o:
 	$(CC) -c $(CFLAGS) Test.cpp -o Test.o
 Sparm.o:

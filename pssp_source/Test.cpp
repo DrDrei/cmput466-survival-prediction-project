@@ -315,7 +315,8 @@ int main(int argc, char* argv[])
 	long effective_sample_size=0; 
 
 	FILE *fp;
-	fp = fopen("Output.txt", "w");// "w" means that we are going to write on this file
+	const char * outputFilename = sparm.GetOutputFile().c_str();
+	fp = fopen(outputFilename, "w");// "w" means that we are going to write on this file
 	// now classify the instances
 	// first compute the probability
 	for (size_t i=0; i<test_sample.size(); i++)

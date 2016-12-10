@@ -4,12 +4,11 @@ import sys, getopt
 import numpy as np
 import os, shutil
 import glob
+import csv
 
-path = '/cancerTypes'
-
-firstLayerPath = '/firstLayer'
-secondLayerPath = '/secondLayer'
-thirdLayerPath = '/thirdLayer'
+cancerPath = '/cancerTypes'
+dataPath = '/cancerTypes/data'
+splitFolderArray = ['/test','/train','/stack']
 
 extension = '.csv'
 
@@ -22,40 +21,55 @@ def writeToFile(file, line):
 	for index in range(2,len(array)):
 		file.write(" " + str(index) + ":" + array[index])
 
+def initFolder(folderPath):
+	if not os.path.exists(folderPath):
+		os.makedirs(folderPath)
+	for file in os.listdir(folderPath):
+		filePath = os.path.join(folderPath, file)
+		try:
+			if os.path.isfile(filePath):
+				os.unlink(filePath)
+		except Exception as e:
+			print(e)
 
 def main(argv):
-	print("test")
-	full_path = os.path.dirname(os.path.abspath(__file__)) + path
-	os.chdir(full_path)
-	print(full_path)
-	for filename in os.listdir(full_path):
+	data_path = os.path.dirname(os.path.abspath(__file__)) + dataPath
+	cancer_path = os.path.dirname(os.path.abspath(__file__)) + cancerPath
+	os.chdir(data_path)
+
+	for folder in splitFolderArray:
+		initFolder(cancer_path + folder)
+	
+	for filename in os.listdir(data_path):
 		print(filename)
-		if ".csv" in filename:
+		if extension in filename:
 			with open(filename) as file:
-				filenameFirst = filename[:-4] + "1.txt"
-				filenameSecond = filename[:-4] + "2.txt"
-				filenameThird = filename[:-4] + "3.txt"
+				filenameFirst = filename[:-4] + "T.txt"
+				filenameSecond = filename[:-4] + "R.txt"
+				filenameThird = filename[:-4] + "Split.csv"
 
 				firstFile = open(filenameFirst, 'w+')
 				secondFile = open(filenameSecond, 'w+')
 				thirdFile = open(filenameThird, 'w+')
-				print(file)
+
 				data = file.read().splitlines(1)
-				data.pop(0)
+				dataHeader = data.pop(0)
+				thirdFile.write(dataHeader)
 
 				count = 0
 				for line in data:
 					count += 1
 					if (count < len(data)*firstLayerSplit):
-						writeToFile(firstFile, line)
+						writeToFile(firstFile, line+"")
 					elif (count < len(data)*secondLayerSplit):	
-						writeToFile(secondFile, line)
+						writeToFile(secondFile, line+"")
 					else:
-						writeToFile(thirdFile, line)
+						thirdFile.write(line+"")
 
-				shutil.move(filenameFirst, full_path+"/split1")
-				shutil.move(filenameSecond, full_path+"/split2")
-				shutil.move(filenameThird, full_path+"/split3")
+				
+				shutil.move(filenameFirst, cancer_path + splitFolderArray[0])
+				shutil.move(filenameSecond, cancer_path + splitFolderArray[1])
+				shutil.move(filenameThird, cancer_path + splitFolderArray[2])
 
 if __name__ == "__main__":
    main(sys.argv[1:])
