@@ -8,7 +8,9 @@ import csv
 
 cancerPath = '/cancerTypes'
 dataPath = '/cancerTypes/data'
-splitFolderArray = ['/test','/train','/stack']
+testDataPath = '/cancerTypes/testData'
+stackDataPath = '/cancerTypes/stackData'
+splitFolderArray = ['/train','/test','/stack']
 
 extension = '.csv'
 
@@ -35,6 +37,9 @@ def initFolder(folderPath):
 def main(argv):
 	data_path = os.path.dirname(os.path.abspath(__file__)) + dataPath
 	cancer_path = os.path.dirname(os.path.abspath(__file__)) + cancerPath
+	testData_path = os.path.dirname(os.path.abspath(__file__)) + testDataPath
+	stackData_path = os.path.dirname(os.path.abspath(__file__)) + stackDataPath
+
 	os.chdir(data_path)
 
 	for folder in splitFolderArray:
@@ -44,32 +49,50 @@ def main(argv):
 		print(filename)
 		if extension in filename:
 			with open(filename) as file:
-				filenameFirst = filename[:-4] + "T.txt"
-				filenameSecond = filename[:-4] + "R.txt"
-				filenameThird = filename[:-4] + "Split.csv"
+				filenameTrain = filename[:-4] + "R.txt"
+				filenameTest = filename[:-4] + "T.txt"
+				filenameStackCSV = filename[:-4] + "Stack.csv"
+				filenameStackTXT = filename[:-4] + "S.txt"
 
-				firstFile = open(filenameFirst, 'w+')
-				secondFile = open(filenameSecond, 'w+')
-				thirdFile = open(filenameThird, 'w+')
+				trainFile = open(filenameTrain, 'w+')
+				testFile = open(filenameTest, 'w+')
+				stackFileCSV = open(filenameStackCSV, 'w+')
+				stackFileTXT = open(filenameStackTXT, 'w+')
+
+				filenameTestExp = filename[:-4] + "Texpected.txt"
+				filenameStackExp = filename[:-4] + "Sexpected.txt"
+
+				testExpFile = open(filenameTestExp, 'w+')
+				stackExpFile = open(filenameStackExp, 'w+')
 
 				data = file.read().splitlines(1)
 				dataHeader = data.pop(0)
-				thirdFile.write(dataHeader)
+				stackFileCSV.write(dataHeader)
 
 				count = 0
 				for line in data:
 					count += 1
+					arrayData = line.split(",")
 					if (count < len(data)*firstLayerSplit):
-						writeToFile(firstFile, line+"")
+						writeToFile(trainFile, line+"")
 					elif (count < len(data)*secondLayerSplit):	
-						writeToFile(secondFile, line+"")
+						if (arrayData[1] == '0'): # filter by cencored patients
+							writeToFile(testExpFile, arrayData[0] + ",\n")
+							writeToFile(testFile, line+"")
 					else:
-						thirdFile.write(line+"")
+						writeToFile(stackExpFile, arrayData[0] + ",\n")
+						writeToFile(stackFileTXT, line+"")
+						stackFileCSV.write(line+"")
 
 				
-				shutil.move(filenameFirst, cancer_path + splitFolderArray[0])
-				shutil.move(filenameSecond, cancer_path + splitFolderArray[1])
-				shutil.move(filenameThird, cancer_path + splitFolderArray[2])
+				shutil.move(filenameTrain, cancer_path + splitFolderArray[0])
+				shutil.move(filenameTest, cancer_path + splitFolderArray[1])
+				shutil.move(filenameStackCSV, cancer_path + splitFolderArray[2])
+				shutil.move(filenameStackTXT, cancer_path + splitFolderArray[2])
+
+
+				shutil.move(filenameTestExp, testData_path + splitFolderArray[1])
+				shutil.move(filenameStackExp, stackData_path + splitFolderArray[2])
 
 if __name__ == "__main__":
    main(sys.argv[1:])

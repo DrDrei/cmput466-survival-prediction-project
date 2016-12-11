@@ -5,20 +5,22 @@ LD=g++
 LDFLAGS=-O3
 PY=python
 #LDFLAGS=-g
-TRAIN_FILES := $(wildcard cancerTypes/train/*.txt)
-MODEL_FILES := $(wildcard cancerTypes/train/*.model)
-TEST_FILES  := $(wildcard cancerTypes/test/*.txt)
+TRAIN_FILES 		:= $(wildcard cancerTypes/train/*.txt)
+MODEL_FILES 		:= $(wildcard cancerTypes/train/*.model)
+TEST_FILES  		:= $(wildcard cancerTypes/test/*.txt)
+STACK_FILES  		:= $(wildcard cancerTypes/stack/*.txt)
 
 TEST_NAMES			:= $(basename $(notdir $(TEST_FILES)))
-MODELNAMES 			:= $(basename $(notdir $(MODEL_FILES)))
+MODEL_NAMES 		:= $(basename $(notdir $(MODEL_FILES)))
+STACK_NAMES			:= $(basename $(notdir $(STACK_FILES)))
 
-	
+
 all: mtlr_train mtlr_test
 
 clean:
 	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt *.model *.test *.train *.interval
 	rm -f -rf cancerTypes/train cancerTypes/test cancerTypes/stack
-	rm cancerTypes/finalData/*.txt
+	rm -f cancerTypes/testData/*.txt cancerTypes/stackData/*.txt
 
 mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o 
 	$(LD) $(LDFLAGS) Sparm.o DenseVector.o SparseVector.o common.o Main.o  -o mtlr_train
@@ -26,7 +28,6 @@ mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o
 mtlr_test: Test.o Sparm.o DenseVector.o SparseVector.o common.o 
 	$(LD) $(LDFLAGS) Test.o Sparm.o DenseVector.o SparseVector.o common.o  -o mtlr_test
 
-	
 data:
 	$(PY) splitData.py
 
@@ -35,8 +36,15 @@ train:
 	
 test:
 	@for testname in $(TEST_NAMES); do \
-		for model in $(MODELNAMES); do \
-			./mtlr_test -i cancerTypes/test/$${testname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/finalData/$${testname}_$${model}.txt; \
+		for model in $(MODEL_NAMES); do \
+			./mtlr_test -i cancerTypes/test/$${testname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/testData/$${testname}_$${model}.txt; \
+		done; \
+	done
+
+stack:
+	@for stackname in $(STACK_NAMES); do \
+		for model in $(MODEL_NAMES); do \
+			./mtlr_test -i cancerTypes/stack/$${stackname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/stackData/$${stackname}_$${model}.txt; \
 		done; \
 	done
 
