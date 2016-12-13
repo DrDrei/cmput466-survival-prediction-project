@@ -73,17 +73,26 @@ def main(argv):
 					count += 1
 					arrayData = line.split(",")
 					if (count < len(data)*firstLayerSplit):
-						writeToFile(trainFile, line+"")
+						writeToFile(trainFile, line)
 					elif (count < len(data)*secondLayerSplit):	
 						if (arrayData[1] == '0'): # filter by cencored patients
 							writeToFile(testExpFile, arrayData[0] + ",\n")
-							writeToFile(testFile, line+"")
+							writeToFile(testFile, line)
 					else:
 						writeToFile(stackExpFile, arrayData[0] + ",\n")
-						writeToFile(stackFileTXT, line+"")
+						writeToFile(stackFileTXT, line)
 						stackFileCSV.write(line+"")
 
+				# not adding the extra line at the end of the stacking for some reason.
+				stackFileTXT.write("\n")
 				
+				trainFile.close()
+				testFile.close()
+				stackFileCSV.close()
+				stackFileTXT.close()
+				testExpFile.close()
+				stackExpFile.close()
+
 				shutil.move(filenameTrain, cancer_path + splitFolderArray[0])
 				shutil.move(filenameTest, cancer_path + splitFolderArray[1])
 				shutil.move(filenameStackCSV, cancer_path + splitFolderArray[2])
