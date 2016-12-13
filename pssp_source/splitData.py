@@ -1,7 +1,6 @@
 import csv
 import io
 import sys, getopt
-import numpy as np
 import os, shutil
 import glob
 import csv
