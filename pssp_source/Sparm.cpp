@@ -8,6 +8,7 @@
 Sparm::Sparm(void)
 :m_inputFilename(""),
 m_modelFilename(""),
+m_outputFilename("Output.txt"),
 m_maxMonth(60),
 m_sizePsi(0),
 m_original_sizePsi(0),
@@ -38,7 +39,8 @@ void Sparm::ReadParam(int argc, char ** argv)
     case 'c': i++; m_C1=atof(argv[i]); break;                   // regularization constant C1
     case 'd': i++; m_C2=atof(argv[i]); break;                   // regularization constant C2
 	case 'i': i++; m_inputFilename=std::string(argv[i]); break; // input filename
-	case 'o': i++; m_modelFilename=std::string(argv[i]); break; // output model filename
+	case 'o': i++; m_modelFilename=std::string(argv[i]); break;
+	case 'f': i++; m_outputFilename=std::string(argv[i]); break; // output model filename
     case 'm': i++; m_maxMonth=atoi(argv[i]); break;             // number of time points
 	case 'l': i++; m_lossType=std::string(argv[i]); break;      // loss function: available types are: 'l1', 'l2', 'l1-log', 'l2-log', 'rae'
 	case 'p': m_printProb=true; break;                          // output string of survival probability for each month

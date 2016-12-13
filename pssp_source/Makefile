@@ -5,16 +5,22 @@ LD=g++
 LDFLAGS=-O3
 PY=python
 #LDFLAGS=-g
-IN_FILES := $(wildcard cancerTypes/split1/*.txt)
-IN_TEST := $(wildcard cancerTypes/split2/*.txt)
+TRAIN_FILES 		:= $(wildcard cancerTypes/train/*.txt)
+MODEL_FILES 		:= $(wildcard cancerTypes/train/*.model)
+TEST_FILES  		:= $(wildcard cancerTypes/test/*.txt)
+STACK_FILES  		:= $(wildcard cancerTypes/stack/*.txt)
 
-.PHONY: train
-.PHONY: test
-	
+TEST_NAMES			:= $(basename $(notdir $(TEST_FILES)))
+MODEL_NAMES 		:= $(basename $(notdir $(MODEL_FILES)))
+STACK_NAMES			:= $(basename $(notdir $(STACK_FILES)))
+
+
 all: mtlr_train mtlr_test
 
 clean:
-	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt example.model
+	rm -f mtlr_train mtlr_test *.o testWrapperData.csv trainWrapperData.csv allWrapperData.csv Output.txt *.model *.test *.train *.interval
+	rm -f -rf cancerTypes/train cancerTypes/test cancerTypes/stack
+	rm -f cancerTypes/testData/*.txt cancerTypes/stackData/*.txt
 
 mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o 
 	$(LD) $(LDFLAGS) Sparm.o DenseVector.o SparseVector.o common.o Main.o  -o mtlr_train
@@ -22,20 +28,26 @@ mtlr_train: Sparm.o DenseVector.o SparseVector.o common.o Main.o
 mtlr_test: Test.o Sparm.o DenseVector.o SparseVector.o common.o 
 	$(LD) $(LDFLAGS) Test.o Sparm.o DenseVector.o SparseVector.o common.o  -o mtlr_test
 
+data:
+	$(PY) splitData.py
 
-wrappera: 
-	$(PY) wrapper.py -a
-wrappert: 
-	$(PY) wrapper.py -t
-testNtrain:
-	./mtlr_train -m 60 -i trainWrapperData.csv -o example.model
-	./mtlr_test -p -m 60 -i testWrapperData.csv -o example.model
+train:
+	$(foreach var, $(TRAIN_FILES), ./mtlr_train -i $(var) -o $(basename $(var)).model;)
 	
-train: $(IN_FILES)
-	./mtlr_train -i $(IN_FILES) -o $(basename $(IN_FILES)).model
+test:
+	@for testname in $(TEST_NAMES); do \
+		for model in $(MODEL_NAMES); do \
+			./mtlr_test -i cancerTypes/test/$${testname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/testData/$${testname}_$${model}.txt; \
+		done; \
+	done
 
-test: $(IN_TEST)
-	./mtlr_test -i $(IN_TEST) -o $(basename $(IN_TEST)).model	
+stack:
+	@for stackname in $(STACK_NAMES); do \
+		for model in $(MODEL_NAMES); do \
+			./mtlr_test -i cancerTypes/stack/$${stackname}.txt -o cancerTypes/train/$${model}.model -f cancerTypes/stackData/$${stackname}_$${model}.txt; \
+		done; \
+	done
+
 Test.o:
 	$(CC) -c $(CFLAGS) Test.cpp -o Test.o
 Sparm.o:
