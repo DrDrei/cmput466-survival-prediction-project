@@ -1,7 +1,7 @@
-Concordance index: 0.712329 
-Avg l1-loss: 14.995771 
-Avg l2-loss: 17.918806 
-Avg rae-loss: 0.785886 
-Avg l1-log-loss: 0.980730 
-Avg l2-log-loss: 1.401215 
-Avg log-likelihood loss: 3.283315 
+Concordance index: 0.200000 
+Avg l1-loss: 14.063754 
+Avg l2-loss: 15.272519 
+Avg rae-loss: 0.815011 
+Avg l1-log-loss: 1.486109 
+Avg l2-log-loss: 3.749774 
+Avg log-likelihood loss: 4.530057 
