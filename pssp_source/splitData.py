@@ -75,13 +75,14 @@ def main(argv):
 					if (count < len(data)*firstLayerSplit):
 						writeToFile(trainFile, line)
 					elif (count < len(data)*secondLayerSplit):	
-						if (arrayData[1] == '0'): # filter by cencored patients
+						if (arrayData[1] == '0'): # filter out cencored patients
 							writeToFile(testExpFile, arrayData[0] + ",\n")
 							writeToFile(testFile, line)
 					else:
-						writeToFile(stackExpFile, arrayData[0] + ",\n")
-						writeToFile(stackFileTXT, line)
-						stackFileCSV.write(line+"")
+						if (arrayData[1] == '0'): # filter out cencored patients
+							writeToFile(stackExpFile, arrayData[0] + ",\n")
+							writeToFile(stackFileTXT, line)
+							stackFileCSV.write(line+"")
 
 				# not adding the extra line at the end of the stacking for some reason.
 				stackFileTXT.write("\n")
