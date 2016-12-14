@@ -163,21 +163,36 @@ s4_EBHM=lm(s4_EBHM_data[,1]~V1.1+V1.2+V1.3,data=s4_EBHM_data)
 predictions = predict.lm(fit, data.test[1,],interval = "prediction")
 # Model - s12_OCSP
 s12_OCSP_test_data = data.frame(indata47,indata34,indata35,indata36)
-s12_OCSP_test = predict.lm(s12_OCSP, s12_OCSP_test_data[1,])
+s12_OCSP_test = predict.lm(s12_OCSP, s12_OCSP_test_data)
 # Model - s12_EBHM
 s12_EBHM_test_data = data.frame(indata48,indata32,indata33,indata31)
-s12_EBHM_test = predict.lm(s12_EBHM, s12_EBHM_test_data[1,])
+s12_EBHM_test = predict.lm(s12_EBHM, s12_EBHM_test_data)
 # Model - s3_OCSP
 s3_OCSP_test_data = data.frame(indata49,indata22,indata23,indata24)
-s3_OCSP_test = predict.lm(s3_OCSP, s3_OCSP_test_data[1,])
+s3_OCSP_test = predict.lm(s3_OCSP, s3_OCSP_test_data)
 # Model - s3_EBHM
 s3_EBHM_test_data = data.frame(indata50,indata19,indata20,indata21)
-s3_EBHM_test = predict.lm(s3_EBHM, s3_EBHM_test_data[1,])
+s3_EBHM_test = predict.lm(s3_EBHM, s3_EBHM_test_data)
 # Model - s4_OCSP
 s4_OCSP_test_data = data.frame(indata51,indata28,indata29,indata30)
-s4_OCSP_test = predict.lm(s4_OCSP, s4_OCSP_test_data[1,])
-# Model - s4_EBHM
+s4_OCSP_test = predict.lm(s4_OCSP, s4_OCSP_test_data)
+# Model - s4_EBHM (indata25:s4ebhmAll, indata26:s4ebhm to s4ebhm, indata27:s4ebhm to s4)
 s4_EBHM_test_data = data.frame(indata52,indata25,indata26,indata27)
-s4_EBHM_test = predict.lm(s4_EBHM, s4_EBHM_test_data[1,])
+s4_EBHM_test = predict.lm(s4_EBHM, s4_EBHM_test_data)
+
+s4_EBHM_test_C = survConcordance(indata52 ~s4_EBHM_test)
+#Compare stacking with true survival times
+a=data.frame(indata47,s12_OCSP_test)
+write.csv(a,file = "stackmodel_s12ocsp_stats.csv")
+b=data.frame(indata48,s12_EBHM_test)
+write.csv(b,file = "stackmodel_s12ebhm_stats.csv")
+c=data.frame(indata49,s3_OCSP_test)
+write.csv(c,file = "stackmodel_s3ocsp_stats.csv")
+d=data.frame(indata50,s3_EBHM_test)
+write.csv(d,file = "stackmodel_s3ebhm_stats.csv")
+e=data.frame(indata51,s4_OCSP_test)
+write.csv(e, file="stackmodel_s4ocsp_stats.csv")
+f=data.frame(indata52,s4_EBHM_test)
+write.csv(f, file="stackmodel_s4ebhm_stats.csv")
 
 
